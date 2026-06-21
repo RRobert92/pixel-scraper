@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "pixel-scraper",
+  "displayName": "Pixel Scraper",
+  "version": "0.2.0",
+  "description": "Visual web scraping with a traditional-first strategy: free HTML extraction, with a screenshot-tile fallback that your own Claude Code session reads — no API key, no extra cost.",
+  "author": {
+    "name": "Robert Kiewisz",
+    "email": "robert.kiewisz@gmail.com"
+  },
+  "homepage": "https://github.com/robertkiewisz/pixel-scraper",
+  "repository": "https://github.com/robertkiewisz/pixel-scraper",
+  "license": "MIT",
+  "keywords": [
+    "web-scraping",
+    "playwright",
+    "vision",
+    "mcp",
+    "screenshot",
+    "extraction"
+  ]
+}

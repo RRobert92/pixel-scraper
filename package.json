@@ -1,0 +1,64 @@
+{
+  "name": "pixel-scraper",
+  "version": "0.2.0",
+  "description": "Visual web scraping for Claude Code — free traditional HTML extraction first, with a screenshot-tile fallback that your own Claude session reads (no API key, no extra API cost).",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Robert Kiewisz",
+    "email": "robert.kiewisz@gmail.com"
+  },
+  "homepage": "https://github.com/robertkiewisz/pixel-scraper#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robertkiewisz/pixel-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/robertkiewisz/pixel-scraper/issues"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "mcp",
+    "mcp-server",
+    "web-scraping",
+    "scraper",
+    "playwright",
+    "vision",
+    "screenshot"
+  ],
+  "bin": {
+    "pixel-scraper": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test 'src/**/*.test.ts'",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "clean": "rm -rf dist",
+    "install:browser": "playwright install chromium",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cheerio": "^1.2.0",
+    "playwright": "^1.61.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pixel-scraper": {
+      "command": "npx",
+      "args": ["-y", "pixel-scraper"]
+    }
+  }
+}

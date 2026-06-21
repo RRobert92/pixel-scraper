@@ -1,0 +1,21 @@
+{
+  "name": "pixel-scraper",
+  "owner": {
+    "name": "Robert Kiewisz",
+    "email": "robert.kiewisz@gmail.com"
+  },
+  "metadata": {
+    "description": "Single-plugin marketplace for Pixel Scraper.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "pixel-scraper",
+      "source": "./",
+      "description": "Visual web scraping with a traditional-first, Claude-Vision-fallback strategy.",
+      "version": "0.2.0",
+      "license": "MIT",
+      "keywords": ["web-scraping", "playwright", "vision", "mcp"]
+    }
+  ]
+}
