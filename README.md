@@ -88,7 +88,7 @@ claude mcp add -s user pixel-scraper -- npx -y pixel-scraper
 This repo doubles as a single-plugin marketplace. From within Claude Code:
 
 ```
-/plugin marketplace add robertkiewisz/pixel-scraper
+/plugin marketplace add RRobert92/pixel-scraper
 /plugin install pixel-scraper@pixel-scraper
 ```
 
@@ -97,7 +97,7 @@ The plugin runs the published server via `npx -y pixel-scraper`, so npm handles 
 ### From source (for development)
 
 ```bash
-git clone https://github.com/robertkiewisz/pixel-scraper.git
+git clone https://github.com/RRobert92/pixel-scraper.git
 cd pixel-scraper
 npm install
 npm run build              # compiles src → dist

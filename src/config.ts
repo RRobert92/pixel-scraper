@@ -27,7 +27,7 @@ export interface Config {
 }
 
 const DEFAULT_USER_AGENT =
-  "Mozilla/5.0 (compatible; pixel-scraper/0.2; +https://github.com/robertkiewisz/pixel-scraper)";
+  "Mozilla/5.0 (compatible; pixel-scraper/0.2; +https://github.com/RRobert92/pixel-scraper)";
 
 function num(name: string, fallback: number, min = 0): number {
   const raw = process.env[name];
