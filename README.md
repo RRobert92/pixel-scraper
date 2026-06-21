@@ -20,10 +20,10 @@ So for a JavaScript-rendered page, an anti-scraping wall, or a `<canvas>`-heavy 
                                  │
                                  ▼
                  ┌───────────────────────────────┐
-                 │  1. Traditional path (FREE)    │
-                 │  HTTP fetch → parse HTML        │
-                 │  • text content                 │
-                 │  • JSON-LD / Open Graph / meta  │
+                 │  1. Traditional path (FREE)   │
+                 │  HTTP fetch → parse HTML      │
+                 │  • text content               │
+                 │  • JSON-LD / Open Graph / meta│
                  └───────────────┬───────────────┘
                                  │
                    good enough?  │
@@ -32,14 +32,14 @@ So for a JavaScript-rendered page, an anti-scraping wall, or a `<canvas>`-heavy 
            │                            (empty, blocked, JS-rendered,
            ▼                             missing required fields…)
  ┌──────────────────────┐                              │
- │ return data directly  │                             ▼
- │ method: "traditional" │            ┌───────────────────────────────┐
- └──────────────────────┘            │  2. Render → legible tiles     │
-                                      │  Playwright screenshot, sliced  │
-                                      │  into bounded vertical tiles    │
-                                      └───────────────┬───────────────┘
-                                                      │
-                                                      ▼
+ │ return data directly │                              ▼
+ │ method: "traditional"│             ┌───────────────────────────────┐
+ └──────────────────────┘             │  2. Render → legible tiles    │
+                                      │  Playwright screenshot, sliced│
+                                      │  into bounded vertical tiles  │
+                                      └────────────────┬──────────────┘
+                                                       │
+                                                       ▼
                               return tiles + instruction to Claude Code
                               → YOUR Claude reads them and extracts
                               → method: "visual", $0 API
