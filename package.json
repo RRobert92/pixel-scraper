@@ -1,6 +1,6 @@
 {
   "name": "pixel-scraper",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Visual web scraping for Claude Code — free traditional HTML extraction first, with a screenshot-tile fallback that your own Claude session reads (no API key, no extra API cost).",
   "type": "module",
   "license": "MIT",
