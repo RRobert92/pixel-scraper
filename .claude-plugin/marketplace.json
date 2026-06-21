@@ -13,7 +13,7 @@
       "name": "pixel-scraper",
       "source": "./",
       "description": "Visual web scraping with a traditional-first, Claude-Vision-fallback strategy.",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "license": "MIT",
       "keywords": ["web-scraping", "playwright", "vision", "mcp"]
     }

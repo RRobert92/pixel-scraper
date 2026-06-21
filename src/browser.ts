@@ -1,3 +1,7 @@
+import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
+
 import { type Browser, chromium } from "playwright";
 
 import type { Config } from "./config.js";
@@ -11,15 +15,112 @@ let browserPromise: Promise<Browser> | null = null;
 
 async function getBrowser(config: Config): Promise<Browser> {
   if (!browserPromise) {
-    browserPromise = chromium.launch({ headless: config.headless }).catch((err: unknown) => {
+    browserPromise = launchWithAutoInstall<Browser>({
+      launch: () => chromium.launch({ headless: config.headless }),
+      installBrowser: installChromium,
+    }).catch((err: unknown) => {
+      // Drop the cached rejection so a later call can try again.
       browserPromise = null;
-      throw new BrowserError(
-        `Failed to launch Chromium. Did you run "npx playwright install chromium"? ` +
-          `Original error: ${errMsg(err)}`,
-      );
+      throw err;
     });
   }
   return browserPromise;
+}
+
+/** True when `err` is Playwright's "browser binary was never downloaded" error. */
+export function isBrowserNotInstalled(err: unknown): boolean {
+  return /executable doesn't exist/i.test(errMsg(err));
+}
+
+export interface AutoInstallDeps<T> {
+  /** Launch the browser; rejects if its binary is missing. */
+  launch: () => Promise<T>;
+  /** Download the missing browser binary. */
+  installBrowser: () => Promise<void>;
+  /** Progress sink; defaults to the stderr logger. */
+  log?: (message: string) => void;
+}
+
+/**
+ * Launch the browser, and if it fails *only because the binary was never
+ * downloaded*, install it once and retry. Any other launch failure is surfaced
+ * as-is — we never reinstall to paper over an unrelated crash, and we never loop
+ * (at most one install attempt, at most one retry).
+ */
+export async function launchWithAutoInstall<T>(deps: AutoInstallDeps<T>): Promise<T> {
+  const log = deps.log ?? ((message: string) => logger.info(message));
+  try {
+    return await deps.launch();
+  } catch (err) {
+    if (!isBrowserNotInstalled(err)) {
+      throw new BrowserError(`Failed to launch Chromium: ${errMsg(err)}`);
+    }
+    log(
+      "Chromium is not installed yet — downloading it now (first run only, ~150 MB). " +
+        "This can take a minute…",
+    );
+    try {
+      await deps.installBrowser();
+    } catch (installErr) {
+      throw new BrowserError(
+        `Failed to launch Chromium: automatic browser download failed — ` +
+          `run "npx playwright install chromium" manually. Original error: ${errMsg(installErr)}`,
+      );
+    }
+    log("Chromium downloaded; retrying launch.");
+    try {
+      return await deps.launch();
+    } catch (retryErr) {
+      throw new BrowserError(
+        `Failed to launch Chromium even after installing the browser. ` +
+          `Original error: ${errMsg(retryErr)}`,
+      );
+    }
+  }
+}
+
+/**
+ * Download the Chromium build Playwright needs, using the playwright CLI bundled
+ * with our installed dependency (so the version always matches — no `npx`
+ * re-resolution).
+ *
+ * This process speaks MCP over stdout, so the child's stdout MUST NOT reach our
+ * stdout. Both child streams are routed to our stderr (fd 2), which keeps the
+ * JSON-RPC channel clean while still surfacing the download progress.
+ */
+async function installChromium(): Promise<void> {
+  const cli = resolvePlaywrightCli();
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(process.execPath, [cli, "install", "chromium"], {
+      stdio: ["ignore", 2, 2],
+    });
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`"playwright install chromium" exited with code ${code ?? "null"}`));
+    });
+  });
+}
+
+/**
+ * Locate the Playwright CLI entry on disk. `cli.js` is not in Playwright's
+ * `exports` map, so it cannot be `require.resolve`d directly — instead we resolve
+ * `package.json` (always allowed) and join its `bin` target.
+ */
+function resolvePlaywrightCli(): string {
+  const require = createRequire(import.meta.url);
+  for (const pkg of ["playwright", "playwright-core"]) {
+    try {
+      const manifestPath = require.resolve(`${pkg}/package.json`);
+      const manifest = require(`${pkg}/package.json`) as { bin?: string | Record<string, string> };
+      const binRel =
+        typeof manifest.bin === "string" ? manifest.bin : (manifest.bin?.[pkg] ?? "cli.js");
+      return join(dirname(manifestPath), binRel);
+    } catch {
+      // Try the next candidate package.
+    }
+  }
+  throw new Error("could not locate the Playwright CLI (is the playwright package installed?)");
 }
 
 /** One screenshot tile: a base64 PNG plus its position in the sequence. */
